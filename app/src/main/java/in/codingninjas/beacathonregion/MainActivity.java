@@ -36,6 +36,7 @@ import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.Region;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -247,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer {
                         regionNameList.add(regionName);
                         regionList.add(region);
                         notifyListChange();
-                        enterRegion(beaconSSN);
+                       // enterRegion(beaconSSN);
                         break;
                     case OUTSIDE:
                         Log.i("TAG","Outside " + regionName);
@@ -257,10 +258,15 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer {
                         if(regionList.contains(region)) {
                             regionList.remove(region);
                             notifyListChange();
-                            exitRegion(beaconSSN);
+                         //   exitRegion(beaconSSN);
                         }
                         break;
                 }
+                ArrayList<String> list_beaconSSN = new ArrayList<String>();
+                for(Region r: regionList){
+                    list_beaconSSN.add(r.getId2().toHexString());
+                }
+                updateUserInRegions(list_beaconSSN);
             }
         };
         beaconManager.addMonitorNotifier(monitorNotifier);
@@ -301,6 +307,23 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void updateUserInRegions(final ArrayList<String> list_beaconSSN){
+        NetworkDataManager<ApiResponse> manager = new NetworkDataManager<>();
+        NetworkDataManager.NetworkResponseListener listener = manager.new NetworkResponseListener() {
+            @Override
+            public void onSuccessResponse(ApiResponse response) {
+                Log.i("TAG","Enter Update Success for beacon: " + list_beaconSSN);
+            }
+
+            @Override
+            public void onFailure(int code, String message) {
+                Log.i("TAG","Enter Update Fail for beacon: " + list_beaconSSN);
+            }
+        };
+        Call<ApiResponse> call= ApiClient.authorizedApiService().updateUserInRegions(list_beaconSSN);
+        manager.execute(call,listener);
     }
 
     private void enterRegion(final String beaconSSN){
