@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "687174292012",
+    "firebase_url": "https://beacathonregion.firebaseio.com",
+    "project_id": "beacathonregion",
+    "storage_bucket": "beacathonregion.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687174292012:android:c5741abf8addb21e",
+        "android_client_info": {
+          "package_name": "in.codingninjas.beacathonregion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "687174292012-s90g45h43m76qdpf6gdem5c6lb3nks7t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.codingninjas.beacathonregion",
+            "certificate_hash": "FE1B60D7A664DB3ED424414ABC09DB6AA1C00BC1"
+          }
+        },
+        {
+          "client_id": "687174292012-c8a0ndsi7s5te9b4rahov4t19a6qahjj.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "687174292012-odfedlip1jf23v5cunu29l377cqn3rkd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKx9JkA5vzD-oRdjdeKgEbPa-olF9HL-4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "687174292012-c8a0ndsi7s5te9b4rahov4t19a6qahjj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
