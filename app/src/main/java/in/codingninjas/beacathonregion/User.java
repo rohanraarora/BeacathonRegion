@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by rohanarora on 22/12/16.
+ *
  */
 
 public class User {

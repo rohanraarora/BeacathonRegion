@@ -2,6 +2,7 @@ package in.codingninjas.beacathonregion;
 
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,16 +37,19 @@ public class RegionDetailActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        Intent i = getIntent();
-        if(i.hasExtra("beacon_ssn")){
-            beaconSSN = i.getStringExtra("beacon_ssn");
+        Intent intent = getIntent();
+        if(intent.hasExtra("beacon_ssn")){
+            beaconSSN = intent.getStringExtra("beacon_ssn");
             fetchUsers();
         }
-        if(i.hasExtra("name")){
-            String name = i.getStringExtra("name");
-            getSupportActionBar().setTitle(name);
+        if(intent.hasExtra("name")){
+            String name = intent.getStringExtra("name");
+            ActionBar actionBar = getSupportActionBar();
+            if(actionBar!=null) {
+                getSupportActionBar().setTitle(name);
+            }
             TextView textView = (TextView)findViewById(R.id.region_detail_text_view);
-            textView.setText("Users Inside " + name);
+            textView.setText("Users Nearby " + name);
         }
 
     }

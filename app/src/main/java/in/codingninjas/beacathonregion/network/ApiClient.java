@@ -23,10 +23,7 @@ public class ApiClient  {
 
     private static ApiService authorizedApiService;
 
-    private ApiClient() {
-    }
-
-
+    private ApiClient() {}
 
     private static void setUpAuthorizedRetrofitClient() {
         OkHttpClient client = new OkHttpClient.Builder()

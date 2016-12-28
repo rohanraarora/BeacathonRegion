@@ -104,6 +104,9 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
                 if(photoURI!=null){
                     profilePicUrl = photoURI.toString();
                 }
+                if(name == null){
+                    name = email;
+                }
 
                 retrofit2.Call<UserResponse> call = ApiClient.authorizedApiService().signUp(email,name,profilePicUrl);
                 NetworkDataManager<UserResponse> manager = new NetworkDataManager<>();
@@ -136,7 +139,6 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
         return cm.getActiveNetworkInfo() != null;
     }
 

@@ -33,6 +33,8 @@ public class MyApp extends Application implements BeaconConsumer {
 
     private static MyApp instance = null;
     private BeaconManager beaconManager;
+
+    //namespace for beacons
     private static final Identifier nameSpaceId = Identifier.parse("0x5dc33487f02e477d4058");
 
     public CopyOnWriteArrayList<String> regionNameList;
@@ -53,6 +55,7 @@ public class MyApp extends Application implements BeaconConsumer {
     public void onCreate() {
         super.onCreate();
         instance = this;
+
         //check signed in
         if (UserUtil.isUserLoggedIn()) {
             setUpBeacon();
@@ -64,6 +67,9 @@ public class MyApp extends Application implements BeaconConsumer {
         regionList = new CopyOnWriteArrayList<>();
         regionNameList = new CopyOnWriteArrayList<>();
 
+        //Creating Regions for each beacon present in room via unique identifier. Each EddyStone UID
+        // format requires namespace and unique identifier. Namespace of all the beacons used for
+        // beacathon is same.
         ssnRegionMap.put("0x0117c59825E9",new Region("Test Room",nameSpaceId, Identifier.parse("0x0117c59825E9"),null));
         ssnRegionMap.put("0x0117c55be3a8",new Region("Git Room",nameSpaceId,Identifier.parse("0x0117c55be3a8"),null));
         ssnRegionMap.put("0x0117c552c493",new Region("Android Room",nameSpaceId,Identifier.parse("0x0117c552c493"),null));
@@ -73,8 +79,12 @@ public class MyApp extends Application implements BeaconConsumer {
         ssnRegionMap.put("0x0117c55ec086",new Region("Ruby Room",nameSpaceId,Identifier.parse("0x0117c55ec086"),null));
 
         beaconManager = BeaconManager.getInstanceForApplication(this);
+
+        //Add EddyStone UID Beacon Parser
         beaconManager.getBeaconParsers().add(new BeaconParser().
                 setBeaconLayout(BeaconParser.EDDYSTONE_UID_LAYOUT));
+
+        //for background scans
         new BackgroundPowerSaver(this);
         beaconManager.bind(this);
 
@@ -96,18 +106,16 @@ public class MyApp extends Application implements BeaconConsumer {
             @Override
             public void didDetermineStateForRegion(int i, Region region) {
                 String regionName = region.getUniqueId();
-                String beaconSSN = region.getId2().toHexString();
                 switch (i){
                     case INSIDE:
+                        // We are inside beacon range. Update list
                         Log.i("TAG","Enter " + regionName);
                         regionNameList.add(regionName);
                         regionList.add(region);
                         MyApp.notifyListChange();
-                       // Toast.makeText(getApplicationContext(),"Found beacon",Toast.LENGTH_SHORT).show();
-                       // MyApp.showNotification("Found beacon");
-                        //enterRegion(beaconSSN);
                         break;
                     case OUTSIDE:
+                        // We are outside beacon range. Update list
                         Log.i("TAG","Outside " + regionName);
                         if(regionNameList.contains(regionName)){
                             regionNameList.remove(regionName);
@@ -116,19 +124,14 @@ public class MyApp extends Application implements BeaconConsumer {
                             regionList.remove(region);
                             MyApp.notifyListChange();
                         }
-                        //exitRegion(beaconSSN);
-                      //  MyApp.showNotification("Exit beacon");
-                        // Toast.makeText(getApplicationContext(),"Exit beacon",Toast.LENGTH_SHORT).show();
                         break;
                 }
 
-                ArrayList<String> list_beaconSSN = new ArrayList<String>();
+                ArrayList<String> beaconSSNs = new ArrayList<>();
                 for(Region r: regionList){
-                    list_beaconSSN.add(r.getId2().toHexString());
+                    beaconSSNs.add(r.getId2().toHexString());
                 }
-                updateUserInRegions(list_beaconSSN);
-
-
+                updateUserInRegions(beaconSSNs);
             }
         });
 
@@ -136,6 +139,7 @@ public class MyApp extends Application implements BeaconConsumer {
         try {
             for(String key:ssnRegionMap.keySet()) {
                 Region region = ssnRegionMap.get(key);
+                //starting monitoring for all regions.
                 beaconManager.startMonitoringBeaconsInRegion(region);
             }
         } catch (RemoteException e) {
@@ -144,52 +148,9 @@ public class MyApp extends Application implements BeaconConsumer {
 
     }
 
-    private static void showNotification(String message){
-        NotificationCompat.Builder mBuilder =   new NotificationCompat.Builder(instance)
-                .setSmallIcon(R.mipmap.ic_launcher) // notification icon
-                .setContentTitle("Status!") // title for notification
-                .setContentText(message) // message for notification
-                .setAutoCancel(true); // clear notification after click
-        NotificationManager mNotificationManager =
-                (NotificationManager) instance.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(0, mBuilder.build());
-
-    }
-
-    private void enterRegion(final String beaconSSN){
-        NetworkDataManager<ApiResponse> manager = new NetworkDataManager<>();
-        NetworkDataManager.NetworkResponseListener listener = manager.new NetworkResponseListener() {
-            @Override
-            public void onSuccessResponse(ApiResponse response) {
-                Log.i("TAG","Enter Update Success for beacon: " + beaconSSN);
-            }
-
-            @Override
-            public void onFailure(int code, String message) {
-                Log.i("TAG","Enter Update Fail for beacon: " + beaconSSN);
-            }
-        };
-        Call<ApiResponse> call= ApiClient.authorizedApiService().addUserInRegion(beaconSSN);
-        manager.execute(call,listener);
-    }
-
-    private void exitRegion(final String beaconSSN){
-        NetworkDataManager<ApiResponse> manager = new NetworkDataManager<>();
-        NetworkDataManager.NetworkResponseListener listener = manager.new NetworkResponseListener() {
-            @Override
-            public void onSuccessResponse(ApiResponse response) {
-                Log.i("TAG","Exit Update Success for beacon: " + beaconSSN);
-            }
-
-            @Override
-            public void onFailure(int code, String message) {
-                Log.i("TAG","Exit Update Fail for beacon: " + beaconSSN);
-            }
-        };
-        Call<ApiResponse> call = ApiClient.authorizedApiService().removeUserFromRegion(beaconSSN);
-        manager.execute(call,listener);
-    }
-
+    /*
+        Updates the list of regions in which the user is currently present.
+     */
     private void updateUserInRegions(final ArrayList<String> list_beaconSSN){
         NetworkDataManager<ApiResponse> manager = new NetworkDataManager<>();
         NetworkDataManager.NetworkResponseListener listener = manager.new NetworkResponseListener() {
@@ -207,6 +168,7 @@ public class MyApp extends Application implements BeaconConsumer {
         Call<ApiResponse> call= ApiClient.authorizedApiService().updateUserInRegions(list_beaconCSV);
         manager.execute(call,listener);
     }
+
 
     private static void notifyListChange(){
         if (instance.context != null && instance.onListRefreshListener != null) {

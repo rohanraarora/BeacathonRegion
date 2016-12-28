@@ -20,8 +20,8 @@ import in.codingninjas.beacathonregion.utils.RoundedImageView;
 
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
-    Context mContext;
-    List<User> mUsers;
+    private Context mContext;
+    private List<User> mUsers;
 
     public UsersAdapter(Context context, List<User> users){
         mContext = context;
