@@ -9,7 +9,7 @@ import java.security.PublicKey;
  */
 public class URLConstants {
 
-    public static final String BASE_URL = "http://localhost:3000/";
+    public static final String BASE_URL = "http://beacathon-test.herokuapp.com/";
     public static final String SIGN_UP = "sign_up.json";
     public static final String ADD_USER_IN_REGION = "add_user_in_region.json";
     public static final String REMOVE_USER_FROM_REGION = "remove_user_from_region.json";

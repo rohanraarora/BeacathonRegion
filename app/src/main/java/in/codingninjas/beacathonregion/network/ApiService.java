@@ -28,7 +28,7 @@ public interface ApiService {
     Call<ApiResponse> removeUserFromRegion(@Query("beacon_ssn")  String beaconSSN);
 
     @POST(URLConstants.UPDATE_USER_IN_REGIONS)
-    Call<ApiResponse> updateUserInRegions(@Query("list_beacon_ssn") ArrayList<String> list_beaconSSN);
+    Call<ApiResponse> updateUserInRegions(@Query("list_beacon_ssn") String list_beaconSSN);
 
     @GET(URLConstants.GET_USERS_FOR_REGION)
     Call<UsersResponse> getUsersForRegion(@Query("beacon_ssn") String beaconSSN);

@@ -124,6 +124,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
                     }
                 };
                 manager.execute(call,listener);
+                MyApp.getInstance().setUpBeacon();
             }
             else {
                 progressBar.setVisibility(View.GONE);
